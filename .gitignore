@@ -63,3 +63,8 @@ target/
 
 # Data 
 *ubyte
+
+# LatexFiles
+*.aux
+*.gz
+*.aux

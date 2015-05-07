@@ -1,5 +1,4 @@
-import numpy as np
-from data_module.load_binary_files import training_ims, training_labels
+from data_module.load_files_logistic import training_ims, training_labels
 
-print training_ims
-print training_labels
+print training_ims.shape
+print training_labels.shape
