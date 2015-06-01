@@ -515,11 +515,6 @@ if __name__ == '__main__':
                      dataset='mnist.pkl.gz', batch_size=20,
                      n_chains=20, n_samples=10, n_hidden=500)
 
-    # Save the weights and samples
-    weights = tuple[0]
-    samples = tuple[1]
-    vis_samples = tuple[2]
-
     # Save the tuple
     folder = './'
     name = 'rbm_tuple'

@@ -1,3 +1,5 @@
-import theano
-x = theano.tensor.dmatrix('x')
-y = x * 2.0
+import os
+
+directory = os.path.curdir
+files = os.listdir(directory)
+print files
