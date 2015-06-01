@@ -1,9 +1,3 @@
-"""This tutorial introduces restricted boltzmann machines (RBM) using Theano.
-
-Boltzmann Machines (BMs) are a particular form of energy-based model which
-contain hidden variables. Restricted Boltzmann Machines further restrict BMs
-to those without visible-visible and hidden-hidden connections.
-"""
 import time
 
 try:
@@ -12,6 +6,7 @@ except ImportError:
     import Image
 
 import numpy
+import matplotlib.pyplot as plt
 
 import theano
 import theano.tensor as T
@@ -19,8 +14,8 @@ import os
 
 from theano.tensor.shared_randomstreams import RandomStreams
 
-from utils import tile_raster_images
-from logistic_sgd import load_data
+from code.utils import tile_raster_images
+from code.logistic_sgd import load_data
 
 
 # start-snippet-1
@@ -269,7 +264,7 @@ class RBM(object):
         # constructs the update dictionary
         for gparam, param in zip(gparams, self.params):
             # make sure that the learning rate is of the right dtype
-            update[sparam] = param - gparam * T.cast(
+            updates[param] = param - gparam * T.cast(
                 lr,
                 dtype=theano.config.floatX
             )
@@ -358,8 +353,7 @@ class RBM(object):
 
 def test_rbm(learning_rate=0.1, training_epochs=15,
              dataset='mnist.pkl.gz', batch_size=20,
-             n_chains=20, n_samples=10, output_folder='rbm_plots',
-             n_hidden=500):
+             n_chains=20, n_samples=10, n_hidden=500):
     """
     Demonstrate how to train and afterwards sample from it using Theano.
 
@@ -410,10 +404,6 @@ def test_rbm(learning_rate=0.1, training_epochs=15,
     #################################
     #     Training the RBM          #
     #################################
-    if not os.path.isdir(output_folder):
-        os.makedirs(output_folder)
-    os.chdir(output_folder)
-
     # start-snippet-5
     # it is ok for a theano function to have no output
     # the purpose of train_rbm is solely to update the RBM parameters
@@ -428,6 +418,10 @@ def test_rbm(learning_rate=0.1, training_epochs=15,
     )
 
     plotting_time = 0.
+    weights = []
+    samples = []
+    vis_set = []
+
     start_time = time.clock()
 
     # go through training epochs
@@ -439,21 +433,7 @@ def test_rbm(learning_rate=0.1, training_epochs=15,
             mean_cost += [train_rbm(batch_index)]
 
         print 'Training epoch %d, cost is ' % epoch, numpy.mean(mean_cost)
-
-        # Plot filters after each training epoch
-        plotting_start = time.clock()
-        # Construct image from the weight matrix
-        image = Image.fromarray(
-            tile_raster_images(
-                X=rbm.W.get_value(borrow=True).T,
-                img_shape=(28, 28),
-                tile_shape=(10, 10),
-                tile_spacing=(1, 1)
-            )
-        )
-        image.save('filters_at_epoch_%i.png' % epoch)
-        plotting_stop = time.clock()
-        plotting_time += (plotting_stop - plotting_start)
+        weights.append(rbm.W.get_value(borrow=True).T)
 
     end_time = time.clock()
 
@@ -507,7 +487,7 @@ def test_rbm(learning_rate=0.1, training_epochs=15,
         [
             vis_mfs[-1],
             vis_samples[-1]
-        ],
+        ], 
         updates=updates,
         name='sample_fn'
     )
@@ -522,19 +502,27 @@ def test_rbm(learning_rate=0.1, training_epochs=15,
         # generate `plot_every` intermediate samples that we discard,
         # because successive samples in the chain are too correlated
         vis_mf, vis_sample = sample_fn()
-        print ' ... plotting sample ', idx
-        image_data[29 * idx:29 * idx + 28, :] = tile_raster_images(
-            X=vis_mf,
-            img_shape=(28, 28),
-            tile_shape=(1, n_chains),
-            tile_spacing=(1, 1)
-        )
+        samples.append(vis_mf)
+        vis_set.append(vis_sample)
 
     # construct image
-    image = Images.fromarray(image_data)
-    image.save('samples.png')
-    # end-snippet-7
-    os.chdir('../')
+
+    tuple = (weights, samples, vis_set)
+    return tuple
 
 if __name__ == '__main__':
-    test_rbm()
+    tuple = test_rbm(learning_rate=0.1, training_epochs=15,
+                     dataset='mnist.pkl.gz', batch_size=20,
+                     n_chains=20, n_samples=10, n_hidden=500)
+
+    # Save the weights and samples
+    weights = tuple[0]
+    samples = tuple[1]
+    vis_samples = tuple[2]
+
+    # Save the tuple
+    folder = './'
+    name = 'rbm_tuple'
+    extension = '.npy'
+
+    numpy.save(name, tuple)
