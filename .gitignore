@@ -68,3 +68,5 @@ target/
 *.aux
 *.gz
 *.aux
+*.bbl
+*.blg

@@ -148,9 +148,20 @@ Author: Ram\'on Heberto Mart\'inez \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Abstract
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+In this work we have explored some basic deep architectures with the Theano library. We worked with an implementation of the Multilayer Perceptron, The Restricted Boltzmann Machine and Deep Belief Networks and explored their functionality and capabilities. We present here a discussion of of the advantages and disadvantages of those approaches implemented with the mentioned library and also the different results of those investigations.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this section we present the two technical components of our work. First we speak about the data set that we use to work and understand the techniques of deep learning and we also talk about the library that we use to implement the required algorithms. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The MNIST Data Set}
@@ -184,7 +195,7 @@ In this work we will be implementing the algorithms in \textbf{Theano}. Along th
 In total we implemented three algorithms using the templates that the \textbf{Theano} library provides: the Multilayer Perceptron, a Restricted Boltzmann machine trained by constrastive divergence and a Deep Belief Network. In this section we briefly describe their architecture and how they fit within the architectural constrains of Theano.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Multi Layer Perception}
+\subsection{Multilayer Perceptron}
 
 The Multilayer perceptron is an artificial neural network without recurrent connections (that is feedfoward) that is a generalization of the linear perceptron. Its strength is that it can distinguish data that is not separable. We present the archicture of our network in figure \ref{fig:mlp}. 
 
@@ -318,15 +329,83 @@ Where the variable chain end was obtained from the Gibbs sampling mechanism (is 
 \subsection{Deep Belief Networks}
 
 
+Deep Belief Networks can be though of the combination of the two  algorithms that we presented above. Until the middle of the last decade most experiments with networks with more than two hidden layers initiated randomly performed poorly (\cite{bengio2009learning}). However, the breakthrough come when it was realized that the multiple layers could be trained with an unsupervised algorithm in a greedy way and then do fine tuning with supervised algorithms as usual. We show the general architecture of DBNs in \ref{fig:dbn} and describe the algorithm in more detail bellow. 
+
+
+\begin{SCfigure}[][h]
+  \centering
+  \caption{Here we describe the architecture of the Deep Belief Network. In general we have an $n$ number of hidden layers. The first layers is the input layers and is used to train the second layer with an unsupervised method (in this case RBM). Then, once trained, the second layer is used used as an input to train the third layer in the same way and so on. At the end a supervised learning method is used for fine tuning all the parameters. (Image taken from the Lisa Lab wikipage)}
+  \includegraphics[width=0.5\textwidth]%
+    {dbn.png}% picture filename
+	\label{fig:dbn}
+\end{SCfigure}
+
+
+The principle to train DBN's in a greedy wise has been described before in \citep{bengio2007greedy} here we resume it for the sake of completeness:
+
+\begin{enumerate}
+\item Train the first layer as an RBM that models the raw input data, that is $x = h_0$.
+\item Use the first layer to build a representation that will be used in the second layer. A common way to do that is to use the mean activation: $p(h_1 = 1 | h_0)$.
+\item Use this representation to train the second layer as the hidden layer of another RBM where the inputs are these activation values. 
+\item Iterate until the last layer.
+\item Fine tune all the parameters of the deep architecture with a supervise learning algorithm. 
+\end{enumerate}
+
+In this work we used RBM's for the pre-training and then we did the fine tuning with the same method that we use for the MLP above. At the level of implementation the critical part is to construct the weights and parameters as shared values that are shared both by the class of the MLP and the class of the RBM's.
+
+\begin{python}
+            # Construct an RBM that shared weights with this layer
+            rbm_layer = RBM(numpy_rng=numpy_rng,
+                            theano_rng=theano_rng,
+                            input=layer_input,
+                            n_visible=input_size,
+                            n_hidden=hidden_layers_sizes[i],
+                            W=sigmoid_layer.W,
+                            hbias=sigmoid_layer.b)
+            self.rbm_layers.append(rbm_layer)
+
+\end{python}
+
+Here the sigmoid layer is the layer of the MLP. What we are doing is to share the weight and bias parameters of the sigmoid layer with the RBM. Then at the end we append it to a list with all the layers. Finally, as usual the gradient with respect to all the parameters can be computed symbolically avoiding numerical problems.
+
+\begin{python}
+# compute the gradients with respect to the model parameters
+        gparams = T.grad(self.finetune_cost, self.params)
+
+\end{python}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Here we present the result of our experiments
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Multilayer Perceptron}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Restricted Boltzmann Machine}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Deep Belief Networks}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this work we have explored the most basic deep learning algorithms with Theano using the MNIST data set. Along these work we have emphasize how the library how the symbolic capabilities of Theano aided us to get rid of numerical stability and implementation issues by constructing gradient descent algebraically instead of implicitly. Furthermore the symbolic construction of the library allowed us to run our algorithms in the GUP without any extra effort. 
+
+-We have done this algoriths and obtain this, this compares to so and so in the literature.
+
+- I have learn that: 
+Regarding deep learning it is clear to me now that the power of the models resides in creating sound statistical representations that gives us further information about our data, those could be called features. A very interesting parallel is in Cognitive Neuroscience were abstract models can be used to accomplish a complex task. In a further work we would like to explore more this line of thinking. 
+
+Moreover we are also aware of the limitations of deep learning architectures. The increase in the number of layers brings a massive computational problem that can create a bottleneck in the progress of the field. Furthermore the complexity (algorithmic-wise and conceptually) of the techniques and concepts create a barrier of entry for understanding and maintaining them.
+
+Finally there are other types of deep neural networks that were not included in this preliminary study.  For image processing Convolutional Neural Networks have been the standard on the field for quite a while. As an alternative for the unsupervised part in the DBN Denoising Auto-Encoders can be used. Furthermore there are more exotic and bedding architectures down the line like Compund Hierachial=Deep Models with a Bayesian inspiration and interpretation. It is of our interest to further explore the capabilities of neural networks to represent short and long-term temporal relationships with temporal data. A natural candidate to accomplish that role are Recurrent Neural Networks, in a further work we would like to address that particular aspect.
 
 \bibliographystyle{plainnat}
 \bibliography{ref_deep_learning}
