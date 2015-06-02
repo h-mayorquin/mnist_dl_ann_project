@@ -313,7 +313,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     patience = 10000  # look as this many examples regardless
     patience_increase = 2  # wait this much longer when a new best is
                            # found
-    improvement_threshold = 0.995  # a relative improvement of this much is
+    improvement_threshold = 0.  # a relative improvement of this much is
                                    # considered significant
     validation_frequency = min(n_train_batches, patience / 2)
                                   # go through this many
@@ -333,10 +333,11 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     iterations = []
     best = 0
 
+    print 'validation frequency', validation_frequency
+
     while (epoch < n_epochs) and (not done_looping):
         epoch = epoch + 1
         for minibatch_index in xrange(n_train_batches):
-
             minibatch_avg_cost = train_model(minibatch_index)
             # iteration number
             iter = (epoch - 1) * n_train_batches + minibatch_index
@@ -355,12 +356,13 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
                 # Appends things to return
                 validation_error.append(this_validation_loss * 100.0)
                 training_error.append(this_training_loss * 100.0)
-                iterations.append(iterations)
-
+                iterations.append(iter)
+                
                 print(
-                    'epoch %i, minibatch %i/%i, validation error %f training_losses %f %f  %%' %
+                    'epoch %i, iter % i minibatch %i/%i, validation error %f training_losses %f %f  %%' %
                     (
                         epoch,
+                        iter,
                         minibatch_index + 1,
                         n_train_batches,
                         this_validation_loss * 100.,
@@ -368,6 +370,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
                         numpy.mean(minibatch_avg_cost) * 100.0
                     )
                 )
+                print '****************'
 
                 # if we got the best validation score until now
                 if this_validation_loss < best_validation_loss:
@@ -380,6 +383,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
                         this_validation_loss < best_validation_loss *
                         improvement_threshold
                     ):
+
                         patience = max(patience, iter * patience_increase)
 
                     best_validation_loss = this_validation_loss
@@ -390,12 +394,16 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
                                    in xrange(n_test_batches)]
                     test_score = numpy.mean(test_losses)
 
+                    print '-----------------------'
+                    print 'Patience', patience
                     print(('     epoch %i, minibatch %i/%i, test error of '
                            'best model %f %%') %
                           (epoch, minibatch_index + 1, n_train_batches,
                            test_score * 100.))
 
             if patience <= iter:
+                print '---------'
+                print 'Patientce exhasted'
                 done_looping = True
                 break
 
@@ -413,73 +421,86 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
 
 if __name__ == '__main__':
     tuple = test_mlp(learning_rate=0.01, L1_reg=0.00,
-                     L2_reg=0.0001, n_epochs=1000,
+                     L2_reg=0.0001, n_epochs=100,
                      dataset='mnist.pkl.gz', batch_size=20, n_hidden=500)
 
 print 'Simulation finished, now plotting'
 
-best = tuple[3]
-Nmarker = 400
-test_score = tuple[4]
 
-# Plot
-to_plot_trai = tuple[0]
-to_plot_val = tuple[1]
-to_plot_iter = tuple[2]
+def plot_mlp(tuple):
 
-to_plot_x = numpy.ones(Nmarker) * best
-to_plot_y = numpy.linspace(5, 15, num=Nmarker)
+    best = tuple[3]
+    Nmarker = 400
+    test_score = tuple[4]
 
+    # Plot
+    to_plot_trai = tuple[0]
+    to_plot_val = tuple[1]
+    to_plot_iter = tuple[2]
 
-# Save the figure here
-directory = './results/'
-extension = '.pdf'
-name = 'mlp_validation'
-filename = directory + name + extension
+    to_plot_x = numpy.ones(Nmarker) * best
+    to_plot_y = numpy.linspace(5, 15, num=Nmarker)
 
-# Format parameters
-fig_size = (16, 12)
-axes_position = [0.1, 0.1, 0.8, 0.8]
-lw = 5
-markersize = 14
+    print 'Parameters charged'
 
-# Text parameters
-fontsize = 20  # The fontsize
-to_plot_title = 'Error analysis (MLP)'
-xlabel = 'Iterations'
-ylabel = 'Error (Percentage)'
-legend1 = 'Training error'
-legend2 = 'Validation error'
+    # Save the figure here
+    directory = './results/'
+    extension = '.pdf'
+    name = 'mlp_validation'
+    filename = directory + name + extension
 
-# Plot here
-fig = plt.figure(figsize=fig_size)
-ax = fig.add_axes(axes_position)
-plot1 = plt.plot(to_plot_iter, to_plot_trai, 'o-',
-                 linewidth=lw, label=legend1, markersize=markersize)
-plt.hold(True)
-plot2 = plt.plot(to_plot_iter, to_plot_val, 'o-',
-                 linewidth=lw, label=legend2, markersize=markersize)
+    # Format parameters
+    fig_size = (16, 12)
+    axes_position = [0.1, 0.1, 0.8, 0.8]
+    lw = 5
+    markersize = 14
 
-plot3 = plt.plot(to_plot_x, to_plot_y, linewidth=lw,
-                 label='Best test = ' + str(test_score))
+    # Text parameters
+    fontsize = 20  # The fontsize
+    to_plot_title = 'Error analysis (MLP)'
+    xlabel = 'Iterations'
+    ylabel = 'Error (Percentage)'
+    legend1 = 'Training error'
+    legend2 = 'Validation error'
 
-# Format
-ax.set_xlabel(xlabel)
-ax.set_ylabel(ylabel)
-ax.set_ylim([0, 20])
-ax.set_title(to_plot_title)
-plt.legend()
+    print 'Parameters charged'
 
+    # Plot here
+    fig = plt.figure(figsize=fig_size)
+    ax = fig.add_axes(axes_position)
+    plt.plot(to_plot_iter, to_plot_trai, 'o-',
+             linewidth=lw, label=legend1, markersize=markersize)
+    plt.hold(True)
+    plt.plot(to_plot_iter, to_plot_val, 'o-',
+             linewidth=lw, label=legend2, markersize=markersize)
 
-# Change the font size
-axes = fig.get_axes()
-for ax in axes:
-    for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] +
-                 ax.get_xticklabels() + ax.get_yticklabels()):
-        item.set_fontsize(fontsize)
+    plt.plot(to_plot_x, to_plot_y, linewidth=lw,
+             label='Best test = ' + str(test_score))
 
-# Save the figure
-plt.savefig(filename)
-os.system("pdfcrop %s %s" % (filename, filename))
+    # Format
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_ylim([0, 20])
+    ax.set_title(to_plot_title)
+    plt.legend()
 
-plt.show()
+    print 'Parameters charged'
+
+    # Change the font size
+    axes = fig.get_axes()
+    for ax in axes:
+        for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] +
+                     ax.get_xticklabels() + ax.get_yticklabels()):
+            item.set_fontsize(fontsize)
+
+    print 'Saving the figure'
+
+    # Save the figure
+    plt.savefig(filename)
+    os.system("pdfcrop %s %s" % (filename, filename))
+
+    return fig
+
+figure = plot_mlp(tuple)
+
+plt.show(figure)

@@ -269,7 +269,7 @@ class RBM(object):
         # constructs the update dictionary
         for gparam, param in zip(gparams, self.params):
             # make sure that the learning rate is of the right dtype
-            update[sparam] = param - gparam * T.cast(
+            updates[param] = param - gparam * T.cast(
                 lr,
                 dtype=theano.config.floatX
             )
