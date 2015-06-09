@@ -152,7 +152,7 @@ Author: Ram\'on Heberto Mart\'inez \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-In this work we have explored some basic deep architectures with the Theano library. We worked with an implementation of the Multilayer Perceptron, The Restricted Boltzmann Machine and Deep Belief Networks and explored their functionality and capabilities. We present here a discussion of of the advantages and disadvantages of those approaches implemented with the mentioned library and also the different results of those investigations.
+In this work we have explored some basic deep architectures with the Theano library. We worked with an implementation of the Multilayer Perceptron, The Restricted Boltzmann Machine and Deep Belief Networks and explored their functionality and capabilities. We present here a discussion of of the advantages and disadvantages of those approaches implemented with the mentioned library and also the results product of that investigation. 
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,11 +161,11 @@ In this work we have explored some basic deep architectures with the Theano libr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this section we present the two technical components of our work. First we speak about the data set that we use to work and understand the techniques of deep learning and we also talk about the library that we use to implement the required algorithms. 
+In this section we present the two technical components of our work. First we speak about the data set that we use to work and understand the techniques of deep learning. Second,  we talk about the library that we used to implement the required algorithms. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The MNIST Data Set}
-The \textbf{MNIST}  data set (\cite{lecun1998mnist}) is a set of images used widely in the field of Machine Learning in general and Visual Recognition in particular. The set consists of hand-written digits from different people. We show a sample of the images in figure \ref{fig:mnist_example} were we can appreciate the variability inter digit and among the digits. 
+The \textbf{MNIST}  data set (\cite{lecun1998mnist}) is a set of images used widely in the field of Machine Learning in general and Visual Recognition in particular. The set consists of hand-written digits from different people. We show a sample of the images in figure \ref{fig:mnist_example} were we can appreciate the variability between the digits and also among the digits (in other words, how different is each digit to each others and within the different instances of itself). 
 
 %% Figure %% 
 \begin{center}
@@ -182,7 +182,7 @@ The set was formed by combining two data sets of the National Institute of Stand
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Theano}
-\textbf{Theano} is a python library that implements symbolic differentiation and evaluation of expressions involving arrays of multiple dimensions (\cite{bergstra2010theano}). The library was developed in the research environment of the University of Montreal and is extensively used in the Deep Learning community as a library that is powerful, efficient and provides ample room for experimentation. 
+\textbf{Theano} is a python library that implements symbolic differentiation and evaluation of expressions involving arrays of multiple dimensions (\cite{bergstra2010theano}). The library was developed in the research environment of the University of Montreal and is extensively used in the Deep Learning community as a library that is powerful, efficient and provides ample room for experimentation. An additional advantage product of the symbolic approach is that networks can be directly pass and complied to a GPU in order to acelerate the research and testing of architectures. 
 
 In this work we will be implementing the algorithms in \textbf{Theano}. Along this work we will mentioned how the capabilities of Theano allow us to carry the task at hand in an easy an convenient way. 
 
@@ -197,18 +197,18 @@ In total we implemented three algorithms using the templates that the \textbf{Th
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Multilayer Perceptron}
 
-The Multilayer perceptron is an artificial neural network without recurrent connections (that is feedfoward) that is a generalization of the linear perceptron. Its strength is that it can distinguish data that is not separable. We present the archicture of our network in figure \ref{fig:mlp}. 
+The Multilayer perceptron is an artificial neural network without recurrent connections (that is feedfoward). It is also  a natural generalization of the linear perceptron. Its strength lies in the fact that it can distinguish data that is not separable (compared to the simplest one-layer ase). We present the architecture of our network in figure \ref{fig:mlp}. 
 
 \begin{SCfigure}[][h]
   \centering
-  \caption{Here we describe the architecture of the Multilayer Perceptron. In the left side of the picture we have the inputs, as inputs the neuron receives the raw data that we are interested in classifying (or using regression), we call the input side the input layer. The input layer should have as many units as dimensions has the data that we are interested in classifying. The layer in between is called the hidden layer and is the responsible or building another representation of our data where the non-linear data is separable. Finally the output layer in the right reveals with its activation to which category the input belongs (or provides the value if it is regression).  }
+  \caption{Here we describe the architecture of the Multilayer Perceptron. In the left side of the picture we have the inputs. As inputs the neuron receives the raw data that we are interested in classifying (or using regression on), we call the input side the input layer. The input layer should have as many units as dimensions has the data that we are interested in classifying. The layer in between is called the hidden layer and is the responsible of building another representation of our data, this can work as separability constrains, compression or just as a way of building better representation. Finally the output layer in the right reveals with its activation to which category the input belongs to (or provides the value if it is regression). Therefore the last layers in classification task should have as many units as classes we have in our data. }
   \includegraphics[width=0.4\textwidth]%
     {MLP.jpg}% picture filename
 	\label{fig:mlp}
 \end{SCfigure}
 
 
-The architecture can be represented mathematically by the following formula
+The architecture can be represented mathematically by the following formula:
 
 \begin{align*}
 f(x) = G(b^2 + W^2 (\underset{Hidden Layer}{s(b^2 + W^1x)}))
@@ -240,7 +240,7 @@ updates = [(classifier.W, classifier.W - learning_rate * g_W),
 \end{python}
 \end{center}
 
-With both this expressions we can use a function that updates the parameters at every training step and as simple as that Theano performs a step of gradient descent. 
+With both this expressions we can use a function that updates the parameters at every training step and as simple as that Theano performs a step of gradient descent symbolically greatly reducing the burden of numerical stability and debugging in our side.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Restricted Boltzmann Machine}
@@ -250,7 +250,7 @@ A Restricted Boltzmann Machine is a neural network that has hidden layer and can
 
 \begin{SCfigure}[][h]
   \centering
-  \caption{Here we describe the architecture of the Restricted Boltzmann Machine. put belongs (or provides the value if it is regression).  The visible units are represented to the left and they correspond to the inputs, that is, they are usually the data that we have and we are interesting in modeling. In the right we have the hidden units, this is the part of the system in charge of representing features and hidden relations in our data. In opposition to complete Boltzmann Machine there are no connections within any of the layers, the only connections are between them.  }
+  \caption{Here we describe the architecture of the Restricted Boltzmann Machine. The visible units are represented to the left and they correspond to the inputs, that is, they are usually the data that we have and we are interesting in modeling. In the right we have the hidden units, this is the part of the system in charge of representing features and hidden relations in our data. In opposition to complete Boltzmann Machine there are no connections within any of the layers, the only connections are between them, that is, it is restricted to not have this type of connectivity hence the name.}
   \includegraphics[width=0.35\textwidth]%
     {rbm.png}% picture filename
 	\label{fig:rbm}
@@ -263,15 +263,15 @@ The Restricted Boltzman Machine is an energy model. That means that we represent
 p(v) = \frac{e^{-E(v)}}{Z}
 \end{align*}
 
-Where $Z$ is just a normalizing factor that is constructed by summing the denominator in the equation above through all the possible values of the input and makes $p$ a probability distribution. 
+Where $Z$ is just a normalizing factor that is constructed by summing the denominator in the equation above through all the possible values of the input. This normalization allows us to interpret $p$ as a probability distribution. 
 
-The idea here is to make our data the most probably with a certain energy function. In this case though, we have hidden units and we are interesting in the distribution over the observable units. So in order to get that distribution we can marginalize in the usual way:
+The idea here is to make our data the most probable with a certain energy function. In this case though, we have hidden units and we are interesting in the distribution over the observable units only (this is what we know). So in order to get that information we can marginalize in the usual way:
 
 \begin{align*}
 P(v) = \sum_{h} P(v,h) = \sum_{h} \frac{e^{-E(v, h)}}{Z}
 \end{align*}
 
-Where the v represents a unit from the visible layer and h a unit from the hidden layer. Being specific in the case of the RBM's the energy function takes the following form:
+Where the $v$ represents a unit from the visible layer and $v$ a unit from the hidden layer. Being specific in the case of the RBM's the energy function takes the following form:
 
 \begin{align*}
 E(v, h) = -bv -ch - hWv 
@@ -323,13 +323,13 @@ It is important to mention that usually we need to express the free energy as an
         gparams = T.grad(cost, self.params, consider_constant=[chain_end])
 \end{python}
 
-Where the variable chain end was obtained from the Gibbs sampling mechanism (is the last sample of the visible layer). The mean over there is because we are using a min-batches approach to regression and therefore we move in the direction of the batch. Note that this symbolical calculation of the gradient saves us a lot of problems in the domain of numerical stability and makes the algorithm overalls cleared (although harder to implement because it requires a different type of thinking).
+Where the variable chain end was obtained from the Gibbs sampling mechanism (is the last sample of the visible layer). The mean over there is because we are using a min-batches approach to regression and therefore we move in the direction indicated by the batch. Note that this symbolical calculation of the gradient saves us a lot of problems in the domain of numerical stability and makes the algorithm overall more clear (although harder to implement because it requires a different type of thinking).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Deep Belief Networks}
 
 
-Deep Belief Networks can be though of the combination of the two  algorithms that we presented above. Until the middle of the last decade most experiments with networks with more than two hidden layers initiated randomly performed poorly (\cite{bengio2009learning}). However, the breakthrough come when it was realized that the multiple layers could be trained with an unsupervised algorithm in a greedy way and then do fine tuning with supervised algorithms as usual. We show the general architecture of DBNs in \ref{fig:dbn} and describe the algorithm in more detail bellow. 
+Deep Belief Networks can be though of the combination of the two  algorithms that we presented above. Until the middle of the last decade most experiments with networks with more than two hidden layers initiated randomly performed poorly (\cite{bengio2009learning}). However, the breakthrough come when it was shown that the multiple layers could be trained with an unsupervised algorithm in a greedy way and then do fine tuning with supervised algorithms as usual. We show the general architecture of DBNs in \ref{fig:dbn} and describe the algorithm in more detail bellow. 
 
 
 \begin{SCfigure}[][h]
@@ -366,7 +366,7 @@ In this work we used RBM's for the pre-training and then we did the fine tuning 
 
 \end{python}
 
-Here the sigmoid layer is the layer of the MLP. What we are doing is to share the weight and bias parameters of the sigmoid layer with the RBM. Then at the end we append it to a list with all the layers. Finally, as usual the gradient with respect to all the parameters can be computed symbolically avoiding numerical problems.
+Here the sigmoid layer is the layer of the MLP. What we are going to share the weight and bias parameters of the sigmoid layer with the RBM. Then at the end we append it to a list with all the layers. Finally, as usual the gradient with respect to all the parameters can be computed symbolically avoiding numerical problems.
 
 \begin{python}
 # compute the gradients with respect to the model parameters
@@ -396,7 +396,7 @@ First we present the results of the Multilayer Perceptron. In the learning proce
 \end{figure} 
 \end{center}
 
-For this MLP we used three layers. The first one is as big as the input which in this case corresponds to all the pixels in the MNIST data set: $784 = 28 \times 28$. For the second layer we used 500 units. Those units could, of course, have been optimized as an hyper-parameter but given the scope of the job we decided to proceed no further. The number of output units here is just the number of categories in our system, in this case the number of digits $=10$. The system was trained with a learning rate of $0.01$ and with a batch size of $20$. We tested the training for around $250,000$ iterations with a learning rate of $0.01$ , we stooped when the validation error stop decreasing and then used a separate set as a test getting an error of $2.18 \%$. 
+For this MLP we used three layers. The first one is as big as the input which in this case corresponds to all the pixels in the MNIST data set: $784 = 28 \times 28$. For the second layer we used 500 units. Those units could, of course, have been optimized as an hyper-parameter but given the scope of the job we decided to proceed no further. The number of output units here is just the number of categories in our system, in this case the number of digits $=10$. The system was trained with a learning rate of $0.01$ and with a batch size of $20$. We tested the training for around $250,000$ iterations with a learning rate of $0.01$, Finally, we stooped when the validation error stop decreasing and then used a separate set as a test getting an error of $2.18 \%$. 
 
 We can see that the Multi-Layer perceptron trained almost out of the box with a couple of additions and the power of Theano symbolic regarding symbolic capabilities can take us very far. We have obtained a miss-classification rate of $2.18 \%$.  This result can be fine tuned further if we are willing ot use certain regularization metrics like the elastic net \citep{zou2005regularization} but we will not pursue this fine tuning here. The idea will be to use this out of the box result as a point to compare how far can we get with the same approach using a more elaborate deep architecture. 
 
@@ -405,7 +405,7 @@ We can see that the Multi-Layer perceptron trained almost out of the box with a 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Restricted Boltzmann Machine}
 
-Then we trained a Restricted Boltzman Machine with the MNIST data so we could learn the statistical structure of the data set. We present here the results. The restricted Boltzman Machine was trained by contrastive divergence with only one step of the sampling chain as suggested in \citep{fischer2014training}. We show some filters in the figure \ref{fig:rbm_filters}.
+We also trained a Restricted Boltzman Machine with the MNIST data so we could learn the statistical structure of the data set. We present here the results. The restricted Boltzman Machine was trained by contrastive divergence with only one step of the sampling chain as suggested in \citep{fischer2014training}. We show some filters in the figure \ref{fig:rbm_filters}.
 
  
 %% Figure %% 
@@ -413,12 +413,12 @@ Then we trained a Restricted Boltzman Machine with the MNIST data so we could le
 \begin{figure}[H]
 \centering
 \includegraphics[scale=.45]{final_filters.pdf} 
-\caption{Here we show some random filters, that is weights, of the RBM. The weights are reshaped as images and plotted in order for us to have an easy visual representation. A possible interpretation of the weights that is typical in Neuroscience is to think the weight as the receptive fields of a particular neuron. In that light we can interpret the shape and form of the weights as complex feature extraction methods that are able to obtain interesting structure about the data. In this case the MNIST data set.}
+\caption{Here we show some random filters, that is weights, of the RBM. The weights are reshaped as images and plotted in order for us to have an easy visual representation. A possible interpretation of the weights that is typical in Neuroscience is to think the weight as the receptive fields of a particular neuron. In that light we can interpret the shape and form of the weights as complex feature extraction methods that are able to obtain interesting structure about the data, in this case the MNIST data set.}
 \label{fig:rbm_filters}
 \end{figure} 
 \end{center}
 
-In our work we used $500$ hidden units, again is important to size that this is yet another hyper-parameter that can be tuned by known methods but we decided to play with this value in particular. The size of the input is again consistent with the structure of the data set $784 = 28 \times 28$. Finally for the updates we used a learning rate a value of $0.1$, we did this over $15$ training epochs used a mini-batch technique of size $20$.  
+In our work we used $500$ hidden units, again is important to realize that this is yet another hyper-parameter that can be tuned by known methods but we decided to play with this value in particular. The size of the input is again consistent with the structure of the data set $784 = 28 \times 28$. Finally for the updates we used a learning rate a value of $0.1$, we did this over $15$ training epochs used a mini-batch technique of size $20$.  
 
 
 
@@ -427,12 +427,12 @@ In our work we used $500$ hidden units, again is important to size that this is 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=.45]{final_filters1.pdf} 
-\caption{Here we show more random filters, that is weights, of the RBM. The weights are reshaped as images and plotted in order for us to have an easy visual representation. A possible interpretation of the weights that is typical in Neuroscience is to think the weight as the receptive fields of a particular neuron. In that light we can interpret the shape and form of the weights as complex feature extraction methods that are able to obtain interesting structure about the data. In this case the MNIST data set.}
+\caption{Here we show more random filters, that is weights, of the RBM. The weights are reshaped as images and plotted in order for us to have an easy visual representation. A possible interpretation of the weights that is typical in Neuroscience is to think the weight as the receptive fields of a particular neuron. In that light we can interpret the shape and form of the weights as complex feature extraction methods that are able to obtain interesting structure about the data, in this case the MNIST data set.}
 \label{fig:rbm_filters1}
 \end{figure} 
 \end{center}
 
-In figure \ref{fig:rbm_filters1} we can present even more weight patterns after training. Some of them have a very clear intepretation like the second one from left to right in the top-row. It almost looks like if its detecting the general shape of a two. The one in the top rightmost corner on the other hand seems to be detecting whether there is a change in a particular frame working as a form of very localized edge detector. Finally  the one at the center of the bottom row seems interestingly similar to a center-surround architecture that is prevalent in the early structure of the visual pathway in the mammalian brain. 
+In figure \ref{fig:rbm_filters1} we can present even more weight patterns after training. Some of them have a very clear interpretation like the second one from left to right in the top-row. It almost looks like if its detecting the general shape of a two. The one in the top rightmost corner on the other hand seems to be detecting whether there is a change in a particular frame, that is, it works as a form of very localized edge detector. Finally  the one at the center of the bottom row seems interestingly similar to a center-surround architecture that is prevalent in the early structure of the visual pathway in the mammalian brain. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Deep Belief Networks}
@@ -452,23 +452,21 @@ Finally we present a Deep Belief Network. As mentioned before in order to use de
 In this particular example we used a three  hidden layer network with the $1000$ units each. Furthermore as in the past examples we used an input layer with as many units as the pixels in the elements of the training set and and output layer with as many units as the classes we are interested in classifying: $10$ for the ten digits. We used a pre-training learning rate of $0.01$ for the movement of the filters during the unsupervised part and a learning rate $0.1$ for the fine tuning. We used $100$ pre-training epochs for each layer and at the end $100$ training epochs for the fine tuning. Again we used the mini-batch technique with a batch-size of $10$.
 
 	
-We can appreciate from figure \ref{fig:dbn_validation} that we obtain a better result that the one from the simple MLP. 
+We can appreciate from figure \ref{fig:dbn_validation} that we obtain a better result that the one from the simple MLP in figure \ref{fig:mlp_valiudation}. According to results in the literature \citep{lecun1998mnist} the best result with a neural network is $0.83$ well below our results. However, it is important to point out that this is achieved with a Convolutional Neural Network that we do not cover here. If we remain in the realm of the multi-layers the best results with neural networks with three layers lie in the range between $1.53$ and $3.05$ so our results falls into that range. 
 
-Point this can be finte tuned
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this work we have explored the most basic deep learning algorithms with Theano using the MNIST data set. Along these work we have emphasize how the library how the symbolic capabilities of Theano aided us to get rid of numerical stability and implementation issues by constructing gradient descent algebraically instead of implicitly. Furthermore the symbolic construction of the library allowed us to run our algorithms in the GUP without any extra effort. 
+In this work we have explored the most basic deep learning algorithms with Theano using the MNIST data set. Along these work we have emphasize how the library how the symbolic capabilities of Theano aided us to get rid of numerical stability and implementation issues by constructing gradient descent algebraically instead of numerically. Furthermore the symbolic construction of the library allowed us to run our algorithms in the GUP without any extra effort. 
 
--We have done this algorithms and obtain this, this compares to so and so in the literature. ANALYZE LE-CUN page.
 
-Regarding deep learning it is clear to me now that the power of the models resides in creating sound statistical representations that gives us further information about our data. Another way to think about is that these statistical regularities of our datare encoded into features that our classifier extracts as we train it. A very interesting parallel is in Cognitive Neuroscience were abstract models or ideas can be used to accomplish a complex task at ease. In a further work we would like to explore more this line of thinking and study how the size, type of complexity of the features varies as we change the architecture of our system. 
+Regarding deep learning in general it is clear to us now that the power of the models resides in creating sound statistical representations that gives us further information about our data. Another way to think about is that these statistical regularities of our data are encoded into features that our classifier extracts as we train it. A very interesting parallel is in Cognitive Neuroscience models were abstract models or ideas can be used to accomplish a complex task at ease. In a further work we would like to explore more this line of thinking and study how the size, type and complexity of the features varies as we change the architecture of our system. 
 
-Moreover this work helped us to better understand the limitations of deep learning architectures. The increase in the number of layers brings a massive computational problem that can create a bottleneck in the progress of the field. Furthermore the complexity (algorithmic-wise and conceptually) of the techniques and concepts create a barrier of entry in terms of knowledge that hinders the maintainability and ease of use of such models. 
+Moreover this work helped us to better understand the limitations of deep learning architectures. The increase in the number of layers brings a massive computational problem that can create a bottleneck in the progress of the field. Furthermore the complexity (algorithmic-wise and conceptually) of the techniques and concepts create a barrier of entry in terms of the knowledge that hinders the maintainability and ease of use of such models. 
 
-Finally there are other types of deep neural networks that were not included in this preliminary study.  For image processing Convolutional Neural Networks present us with yet another alternative for the unsupervised part. In the DBN we can skip RBMs altogether and use Denoising Auto-Encoders instead. Furthermore there are more exotic and bedding architectures down the line like Compund Hierachial=Deep Models with a Bayesian inspiration and interpretation. It is of our interest to further explore the capabilities of neural networks to represent short and long-term temporal relationships with temporal data. A natural candidate to accomplish that role are Recurrent Neural Networks, in a further work we would like to address that particular aspect of the field. 
+Finally there are other types of deep neural networks that were not included in this preliminary study. For image processing Convolutional Neural Networks present us with yet another alternative for the unsupervised part. In the DBN we can skip RBMs altogether and use Denoising Auto-Encoders instead. Furthermore there are more exotic and bedding architectures down the line like Compund Hierachial=Deep Models with a Bayesian inspiration and interpretation. It is of our interest to further explore the capabilities of neural networks to represent short and long-term temporal relationships with temporal data. A natural candidate to accomplish that role are Recurrent Neural Networks, in further work we would like to address that particular aspect of the field. 
 
 \bibliographystyle{plainnat}
 \bibliography{ref_deep_learning}
